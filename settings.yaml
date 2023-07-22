@@ -1,0 +1,28 @@
+# #################################################
+# This file is for setting up configs for cluster #
+#                                                 #
+# author: Andranik Grigoryan                      # 
+# repo: vagrant-kubernetes-provisioning           #
+#                                                 #
+# #################################################
+
+cluster_name: Kubernetes # Cluster name is for grouping cluster vm's in VirtualBox. If empty no group is created 
+
+network: # Settings for network 
+  master_ip: 10.0.0.10 # IP of master node.(Worker IP-s are incremented from master ip)
+  pod_cidr: 
+  service_cidr: 
+
+nodes: # Setting of nodes 
+  control: # Master node settings 
+    cpu: 2
+    memory: 4096
+  workers: # Worker nodes (default is 2 worker nodes, to change thir count refer to workers.count)
+    count: 1
+    cpu: 1
+    memory: 2048
+
+additional: # Additional cluster settings 
+  box: centos7 # Image to use for virtual machines 
+  kubernets: 1.27.1-00
+  calico: 3.26.0 # Calico is network plugin that is used for this cluster 

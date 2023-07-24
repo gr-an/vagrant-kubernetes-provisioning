@@ -18,7 +18,7 @@ nodes: # Setting of nodes
     cpu: 2
     memory: 4096
   workers: # Worker nodes (default is 2 worker nodes, to change thir count refer to workers.count)
-    count: 1
+    count: 2
     cpu: 1
     memory: 2048
 

@@ -51,4 +51,23 @@ Vagrant.configure("2") do |config|
         end
     end
   end
+
+  # Worker nodes configuration 
+  (1..WORKERS_COUNT).each do |i| # Loop for each worker nodes: (to change nodes count see settings.yaml)
+      config.vm.define "node0#{i}" do |node|
+        node.vm.hostname = "worker-node0#{i}"
+        node.vm.network "private_network", ip: WORKERS_IP + "#{10 + i}"
+
+      # TODO: sync_folders settings to add
+      
+        node.vm.provider "virtualbox" do |vbox|
+          vbox.cpus = settings["nodes"]["workers"]["cpu"]
+          vbox.memory = settings["nodes"]["workers"]["memory"]
+          if settings["cluster_name"] and settings["cluster_name"] != ""
+            vbox.customize ["modifyvm", :id, "--groups", ("/" + settings["cluster_name"])]
+          end
+        end
+      end
+  end
+
 end

@@ -42,7 +42,7 @@ EOF
 VERSION="$(echo ${KUBERNETES_VERSION} | grep -oE '[0-9]+\.[0-9]+')"
 
 # Install kubernetes components
-yum install -y kubelet="$KUBERNETES_VERSION" kubectl="$KUBERNETES_VERSION" kubeadm="$KUBERNETES_VERSION"
+yum install -y kubelet-"$KUBERNETES_VERSION" kubectl-"$KUBERNETES_VERSION" kubeadm-"$KUBERNETES_VERSION"
 
 # Enable and start kubelet service
 systemctl enable --now kubelet

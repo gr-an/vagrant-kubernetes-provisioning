@@ -19,11 +19,36 @@ WORKERS_COUNT = settings["nodes"]["workers"]["count"] # Count of worker nodes
 
 # Adding configuration to /etc/host for vms 
 Vagrant.configure("2") do |config|
-  config.vm.provision "shell", env: {"MASTER_IP" => MASTER_IP, WORKERS_IP => WORKERS_IP, WORKERS_COUNT => WORKERS_COUNT}, inline: <<-SHELL 
-    apt update -y 
-    echo "$MASTER_IP master-node" >> /etc/hosts
-    for i in `seq 1 ${WORKERS_COUNT}`; do 
-      echo "$((WORKERS_IP+i)) worker-node${i}" >> /etc/hosts
-    done
+  # Initial configuration script 
+  config.vm.provision "shell", env: { "MASTER_IP" => MASTER_IP, "WORKERS_IP" => WORKERS_IP, "WORKERS_COUNT" => WORKERS_COUNT }, inline: <<-SHELL
+      yum update -y
+      echo "$MASTER_IP master-node" >> /etc/hosts
+      for i in `seq 1 ${NUM_WORKER_NODES}`; do
+        echo "${WORKERS_IP} ${i} worker-node0${i}" >> /etc/hosts
+      done
   SHELL
+
+  # Setting up vm-s os 
+  if `uname -m`.strip == "aarch64"
+    config.vm.box = settings["additional"]["box"] + "-arm64"
+  else
+    config.vm.box = settings["additional"]["box"]
+  end
+  config.vm.box_check_update = true
+  
+  # Master node configuration
+  config.vm.define "master" do |master|
+    master.vm.hostname = "master-node"
+    master.vm.network "private_network", ip: MASTER_IP
+    
+    # TODO: Add sync_folders option 
+
+    master.vm.provider "virtualbox" do |vb|
+        vb.cpus = settings["nodes"]["control"]["cpu"]
+        vb.memory = settings["nodes"]["control"]["memory"]
+        if settings["cluster_name"] and settings["cluster_name"] != ""
+          vb.customize ["modifyvm", :id, "--groups", ("/" + settings["cluster_name"])]
+        end
+    end
+  end
 end

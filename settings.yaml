@@ -23,6 +23,6 @@ nodes: # Setting of nodes
     memory: 2048
 
 additional: # Additional cluster settings 
-  box: centos7 # Image to use for virtual machines 
+  box: centos/7 # Image to use for virtual machines 
   kubernets: 1.27.1-00
   calico: 3.26.0 # Calico is network plugin that is used for this cluster 
